@@ -4,8 +4,8 @@ configurable int inventoryServicePort = 8081;
 
 // Database configuration
 configurable string dbHost = "localhost";
-configurable string dbUser = "root";
-configurable string dbPassword = "root";
+configurable string dbUser = "XXXXXXX";
+configurable string dbPassword = "XXXXXXX";
 configurable string dbName = "order_management";
 configurable int dbPort = 3306;
 
