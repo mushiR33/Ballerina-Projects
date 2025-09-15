@@ -1,0 +1,14 @@
+// HTTP service configuration
+configurable int httpPort = 8080;
+configurable int inventoryServicePort = 8081;
+
+// Database configuration
+configurable string dbHost = "localhost";
+configurable string dbUser = "root";
+configurable string dbPassword = "root";
+configurable string dbName = "order_management";
+configurable int dbPort = 3306;
+
+// Inventory service configuration
+configurable string inventoryServiceHost = "localhost";
+configurable string inventoryServiceUrl = "http://localhost:8081";
