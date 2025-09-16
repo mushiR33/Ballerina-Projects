@@ -1,6 +1,7 @@
 import ballerina/sql;
 import ballerina/uuid;
 import ballerina/http;
+import ballerina/log;
 
 // Generate unique order ID using UUID Type 1 with ORD- prefix
 public function generateOrderId() returns string {
@@ -199,7 +200,7 @@ public function callInventoryUpdateService(string orderId, OrderItem[] orderItem
     };
     
     InventoryUpdateResponse|http:ClientError response = inventoryServiceClient->post("/inventory/update", updateRequest);
-    
+    log:printInfo("Inventory service url: " + inventoryServiceUrl);
     if response is http:ClientError {
         string responseMessage = response.message();
         return error("Failed to call inventory service: " + responseMessage);

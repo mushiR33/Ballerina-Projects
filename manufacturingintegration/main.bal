@@ -1,4 +1,5 @@
 import ballerina/http;
+import ballerina/log;
 
 // Order placement service with inventory verification
 @http:ServiceConfig {
@@ -78,6 +79,7 @@ service /api on new http:Listener(8080) {
         string|error insertResult = insertOrder(newOrder);
 
         if insertResult is error {
+            log:printError("Failed to insert order: " + insertResult.message());
             string insertMessage = insertResult.message();
             http:InternalServerError internalError = {
                 body: {
