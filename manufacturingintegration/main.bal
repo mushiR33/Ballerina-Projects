@@ -169,7 +169,6 @@ service /api on new http:Listener(8080) {
         return {
             "status": "UP",
             "service": "Order Placement API with Inventory Verification",
-            "inventoryService": inventoryServiceUrl,
             "timestamp": currentTime
         };
     }
