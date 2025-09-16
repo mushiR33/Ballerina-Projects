@@ -6,5 +6,4 @@ configurable string dbName = "order_management";
 configurable int dbPort = 3306;
 
 // Inventory service configuration
-configurable string inventoryServiceHost = "localhost";
 configurable string inventoryServiceUrl = "http://localhost:8081";
