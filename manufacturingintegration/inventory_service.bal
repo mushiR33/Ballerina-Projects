@@ -1,5 +1,5 @@
 // import ballerina/http;
-
+ 
 // // Inventory management service
 // @http:ServiceConfig {
 //     cors: {
