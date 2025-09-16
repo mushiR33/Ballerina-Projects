@@ -9,7 +9,7 @@ import ballerina/http;
         allowMethods: ["GET", "POST", "PUT", "OPTIONS"]
     }
 }
-service /inventory on new http:Listener(8080) {
+service /inventory on new http:Listener(8081) {
 
     // Update inventory after order placement
     resource function post update(InventoryUpdateRequest updateRequest) returns InventoryUpdateResponse|ErrorResponse|http:InternalServerError {
