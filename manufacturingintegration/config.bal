@@ -1,7 +1,3 @@
-// HTTP service configuration
-configurable int httpPort = 8080;
-configurable int inventoryServicePort = 8081;
-
 // Database configuration
 configurable string dbHost = "localhost";
 configurable string dbUser = "XXXXXXX";

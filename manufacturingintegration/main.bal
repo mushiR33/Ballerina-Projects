@@ -9,7 +9,7 @@ import ballerina/http;
         allowMethods: ["GET", "POST", "OPTIONS"]
     }
 }
-service /api on new http:Listener(httpPort) {
+service /api on new http:Listener(8080) {
 
     // Place a new order with inventory verification
     resource function post orders(OrderRequest orderRequest) returns OrderResponse|ErrorResponse|http:InternalServerError {
