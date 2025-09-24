@@ -1,5 +1,5 @@
+import ballerina/ai;
 import ballerina/http;
-import ballerina/log;
 
 // Order placement service with inventory verification
 @http:ServiceConfig {
@@ -15,104 +15,19 @@ service /api on new http:Listener(8080) {
     // Place a new order with inventory verification
     resource function post orders(OrderRequest orderRequest) returns OrderResponse|ErrorResponse|http:InternalServerError {
 
-        // Validate the order request
-        error? validationResult = validateOrderRequest(orderRequest);
-        if validationResult is error {
-            string validationMessage = validationResult.message();
-            ErrorResponse errorResponse = {
-                message: validationMessage,
-                errorCode: "VALIDATION_ERROR"
-            };
-            return errorResponse;
-        }
-
-        // Convert request items to order items with calculated total prices
-        OrderItemRequest[] requestItems = orderRequest.items;
-        OrderItem[] orderItems = convertToOrderItems(requestItems);
-
-        // Verify stock availability for all items
-        StockVerificationResult|error stockVerification = verifyStockAvailability(orderItems);
-
-        if stockVerification is error {
-            string stockMessage = stockVerification.message();
-            ErrorResponse errorResponse = {
-                message: "Stock verification failed: " + stockMessage,
-                errorCode: "INVENTORY_CHECK_ERROR"
-            };
-            return errorResponse;
-        }
-
-        StockVerificationResult stockResult = stockVerification;
-        boolean allItemsAvailable = stockResult.allItemsAvailable;
-
-        if !allItemsAvailable {
-            string[] unavailableItems = stockResult.unavailableItems;
-            string unavailableMessage = "Insufficient stock for items: " + unavailableItems.toString();
-            ErrorResponse errorResponse = {
-                message: unavailableMessage,
-                errorCode: "INSUFFICIENT_STOCK"
-            };
-            return errorResponse;
-        }
-
-        // Generate unique order ID and timestamp
-        string orderId = generateOrderId();
-        string orderDate = getCurrentTimestamp();
-
-        // Calculate total amount from converted order items
-        decimal totalAmount = calculateTotalAmount(orderItems);
-
-        // Create order record
-        string customerId = orderRequest.customerId;
-        string customerName = orderRequest.customerName;
-        Order newOrder = {
-            orderId: orderId,
-            customerId: customerId,
-            customerName: customerName,
-            items: orderItems,
-            totalAmount: totalAmount,
-            orderDate: orderDate,
-            status: "PENDING"
+    OrderResponse|ErrorResponse|error result = processOrderPlacement(orderRequest);
+    
+    if result is error {
+        http:InternalServerError internalError = {
+            body: {
+                message: result.message(),
+                errorCode: "PROCESSING_ERROR"
+            }
         };
-
-        // Insert order into database
-        string|error insertResult = insertOrder(newOrder);
-
-        if insertResult is error {
-            log:printError("Failed to insert order: " + insertResult.message());
-            string insertMessage = insertResult.message();
-            http:InternalServerError internalError = {
-                body: {
-                    message: "Failed to place order: " + insertMessage,
-                    errorCode: "DATABASE_ERROR"
-                }
-            };
-            return internalError;
-        }
-
-        // Call inventory service to update inventory after successful order placement
-        error? inventoryUpdateResult = callInventoryUpdateService(orderId, orderItems);
-
-        if inventoryUpdateResult is error {
-            string inventoryMessage = inventoryUpdateResult.message();
-            http:InternalServerError internalError = {
-                body: {
-                    message: "Order placed but inventory update failed: " + inventoryMessage,
-                    errorCode: "INVENTORY_SERVICE_ERROR"
-                }
-            };
-            return internalError;
-        }
-
-        // Return success response
-        OrderResponse response = {
-            orderId: orderId,
-            message: "Order placed successfully with inventory updated via service",
-            status: "PENDING",
-            totalAmount: totalAmount
-        };
-
-        return response;
+        return internalError;
+    }
+    
+    return result;
     }
 
     // Get order details by order ID
@@ -173,5 +88,14 @@ service /api on new http:Listener(8080) {
             "service": "Order Placement API with Inventory Verification",
             "timestamp": currentTime
         };
+    }
+}
+
+listener ai:Listener OrderProcessingAgentListener = new (listenOn = check http:getDefaultListener());
+
+service /OrderProcessingAgent on OrderProcessingAgentListener {
+    resource function post chat(@http:Payload ai:ChatReqMessage request) returns ai:ChatRespMessage|error {
+        string stringResult = check _OrderProcessingAgentAgent.run(request.message, request.sessionId);
+        return {message: stringResult};
     }
 }

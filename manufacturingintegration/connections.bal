@@ -13,3 +13,6 @@ public final mysql:Client dbClient = check new(
 
 // HTTP client for inventory service communication
 public final http:Client inventoryServiceClient = check new(inventoryServiceUrl);
+
+// HTTP client for API service communication
+public final http:Client apiServiceClient = check new(apiServiceUrl);
