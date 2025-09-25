@@ -1,4 +1,4 @@
-import ballerina/ai;
+import ballerinax/ai;
 import ballerina/http;
 
 // Order placement service with inventory verification
@@ -15,19 +15,19 @@ service /api on new http:Listener(8080) {
     // Place a new order with inventory verification
     resource function post orders(OrderRequest orderRequest) returns OrderResponse|ErrorResponse|http:InternalServerError {
 
-    OrderResponse|ErrorResponse|error result = processOrderPlacement(orderRequest);
-    
-    if result is error {
-        http:InternalServerError internalError = {
-            body: {
-                message: result.message(),
-                errorCode: "PROCESSING_ERROR"
-            }
-        };
-        return internalError;
-    }
-    
-    return result;
+        OrderResponse|ErrorResponse|error result = processOrderPlacement(orderRequest);
+
+        if result is error {
+            http:InternalServerError internalError = {
+                body: {
+                    message: result.message(),
+                    errorCode: "PROCESSING_ERROR"
+                }
+            };
+            return internalError;
+        }
+
+        return result;
     }
 
     // Get order details by order ID
@@ -95,7 +95,10 @@ listener ai:Listener OrderProcessingAgentListener = new (listenOn = check http:g
 
 service /OrderProcessingAgent on OrderProcessingAgentListener {
     resource function post chat(@http:Payload ai:ChatReqMessage request) returns ai:ChatRespMessage|error {
-        string stringResult = check _OrderProcessingAgentAgent.run(request.message, request.sessionId);
+        string stringResult = check _OrderProcessingAgentAgent->run(request.message, request.sessionId);
         return {message: stringResult};
     }
 }
+
+listener ai:Listener OrderAgentListener = new (listenOn = check http:getDefaultListener());
+

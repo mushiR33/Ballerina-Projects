@@ -1,11 +1,10 @@
 // This file can be used for future AI agent integrations
 // Currently empty but reserved for agent-related functionality
 
-import ballerina/ai;
+import ballerinax/ai;
 
-final ai:Wso2ModelProvider _OrderProcessingAgentModel = check ai:getDefaultModelProvider();
 final ai:Agent _OrderProcessingAgentAgent = check new (
-    systemPrompt = {role: "Order Processing Assistant", instructions: string `You are an order processing assistant, designed to guide cashiers through each step of the order processing process, asking relevant questions to ensure orders are handed accurately and efficiently.`}, model = _OrderProcessingAgentModel, tools = [getOrder, getItemsOfOrder, getInventoryOfProduct, createOrderPlacement]
+    systemPrompt = {role: "Order Processing Assistant", instructions: string `You are an order processing assistant, designed to guide cashiers through each step of the order processing process, asking relevant questions to ensure orders are handed accurately and efficiently.`}, model = aiOpenaiproviderOut, tools = [getOrder, getItemsOfOrder, getInventoryOfProduct, createOrderPlacement]
 );
 
 # Define a function

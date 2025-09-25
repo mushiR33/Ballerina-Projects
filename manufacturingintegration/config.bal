@@ -10,3 +10,4 @@ configurable string inventoryServiceUrl = "http://localhost:8081";
 
 // API service configuration
 configurable string apiServiceUrl = "http://localhost:8080";
+configurable string openAIAPIKey = ?;
