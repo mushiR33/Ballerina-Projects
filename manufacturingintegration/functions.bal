@@ -199,7 +199,7 @@ public isolated function callInventoryUpdateService(string orderId, OrderItem[] 
         items: orderItems
     };
 
-    InventoryUpdateResponse|http:ClientError response = inventoryServiceClient->post("/inventory/update", updateRequest);
+    InventoryUpdateResponse|http:ClientError response = inventoryServiceClient->post("/update", updateRequest);
     log:printInfo("Inventory service url: " + inventoryServiceUrl);
     if response is http:ClientError {
         string responseMessage = response.message();
