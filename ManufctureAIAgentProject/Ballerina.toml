@@ -1,0 +1,8 @@
+[package]
+org = "mushthaqrumy"
+name = "manufactureaiagent"
+version = "0.1.0"
+title = "ManufactureAIAgent"
+
+[build-options]
+sticky = true
